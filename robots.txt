@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://www.leicester-car-recovery.co.uk/sitemap.xml
