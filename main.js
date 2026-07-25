@@ -45,10 +45,10 @@ function toggleFaq(btn) {
 
 // ── CHAT ──
 const BOT_REPLIES = [
-  "Thanks! Kris will see this shortly. For emergencies please call <strong>0116 488 3518</strong> directly — he answers 24/7 🚨",
-  "Got it. For urgent jobs, calling is always fastest: <strong>0116 488 3518</strong>. Kris answers personally.",
+  "Thanks! Kris will see this shortly. For emergencies please call <strong>07865 449983</strong> directly — he answers 24/7 🚨",
+  "Got it. For urgent jobs, calling is always fastest: <strong>07865 449983</strong>. Kris answers personally.",
   "Message received! You can also reach Kris on WhatsApp using the button above.",
-  "Thanks for getting in touch. For live breakdowns always call <strong>0116 488 3518</strong> — much faster than chat."
+  "Thanks for getting in touch. For live breakdowns always call <strong>07865 449983</strong> — much faster than chat."
 ];
 let botIdx = 0;
 
@@ -78,7 +78,7 @@ async function sendChat() {
     `━━━━━━━━━━━━━━━━━━\n` +
     `💬 <b>Message:</b> ${escHtml(text)}\n` +
     `━━━━━━━━━━━━━━━━━━\n` +
-    `⚡ Reply: https://wa.me/441164883518`
+    `⚡ Reply: https://wa.me/447865449983`
   );
 
   setTimeout(() => {
@@ -308,4 +308,101 @@ document.addEventListener('DOMContentLoaded', function() {
       a.classList.add('active');
     }
   });
+});
+
+
+/* ══════════════════════════════════════
+   FRICTIONLESS LEAD SYSTEM
+   Callback drawer + quick forms
+   All fire to Telegram instantly
+   ══════════════════════════════════════ */
+
+// ── CALLBACK DRAWER ──
+function openCallback() {
+  document.getElementById('callbackDrawer').classList.add('open');
+  document.getElementById('callbackOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  // focus name field
+  setTimeout(() => {
+    const n = document.getElementById('cbName');
+    if (n) n.focus();
+  }, 350);
+}
+
+function closeCallback() {
+  document.getElementById('callbackDrawer').classList.remove('open');
+  document.getElementById('callbackOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Close drawer on overlay tap
+document.addEventListener('DOMContentLoaded', function() {
+  const overlay = document.getElementById('callbackOverlay');
+  if (overlay) overlay.addEventListener('click', closeCallback);
+});
+
+// ── SUBMIT QUICK CALLBACK (drawer or inline widget) ──
+// formId = the container div id, successId = success div id
+async function submitCallback(nameId, phoneId, successId, submitBtnId, jobType) {
+  const nameEl  = document.getElementById(nameId);
+  const phoneEl = document.getElementById(phoneId);
+  const btn     = document.getElementById(submitBtnId);
+
+  if (!nameEl || !phoneEl) return;
+
+  const name  = nameEl.value.trim();
+  const phone = phoneEl.value.trim();
+
+  if (!name || !phone) {
+    showToast('Please enter your name and phone number.', 'error');
+    return;
+  }
+
+  if (!/^[0-9 +]{10,14}$/.test(phone.replace(/\s/g, ''))) {
+    showToast('Please enter a valid UK phone number.', 'error');
+    return;
+  }
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+
+  const type = jobType || 'callback';
+  const label = type === 'prebook' ? '📅 PRE-BOOK REQUEST' : '📞 CALLBACK REQUEST';
+
+  await sendTelegram(
+    `${label}
+` +
+    `━━━━━━━━━━━━━━━━━━
+` +
+    `👤 <b>Name:</b> ${escHtml(name)}
+` +
+    `📞 <b>Phone:</b> ${escHtml(phone)}
+` +
+    `━━━━━━━━━━━━━━━━━━
+` +
+    `⚡ <a href="tel:${escHtml(phone.replace(/\s/g,''))}">${escHtml(phone)}</a>`
+  );
+
+  // Show success
+  if (btn) { btn.disabled = false; btn.textContent = 'Request Callback →'; }
+  const successEl = document.getElementById(successId);
+  if (successEl) {
+    successEl.classList.add('show');
+    nameEl.value = '';
+    phoneEl.value = '';
+  }
+
+  // Auto-close drawer after 2.5s
+  if (successId === 'drawerSuccess') {
+    setTimeout(closeCallback, 2500);
+  }
+}
+
+// ── ENTER KEY on callback inputs ──
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return;
+  const id = document.activeElement && document.activeElement.id;
+  if (id === 'cbName')       document.getElementById('cbPhone').focus();
+  else if (id === 'cbPhone') submitCallback('cbName','cbPhone','drawerSuccess','drawerBtn','callback');
+  else if (id === 'hwName')  document.getElementById('hwPhone').focus();
+  else if (id === 'hwPhone') submitCallback('hwName','hwPhone','heroSuccess','heroBtn','callback');
 });
