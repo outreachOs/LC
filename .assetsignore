@@ -1,9 +1,29 @@
+# Cloudflare Workers Static Assets ignore file.
+# Since wrangler.jsonc's assets.directory is "." (the whole project root),
+# anything not listed here would otherwise be uploaded and made publicly
+# downloadable at its path (e.g. https://www.leicester-car-recovery.co.uk/wrangler.jsonc).
+# Format is .gitignore-style. See:
+# https://developers.cloudflare.com/workers/static-assets/binding/
+
+# Version control
 .git
-.git/**
+.gitignore
+
+# Wrangler build/cache output and secrets
 .wrangler
-.wrangler/**
-node_modules
-node_modules/**
-*.diff
+wrangler.jsonc
+.dev.vars
+.dev.vars.*
 .env
 .env.*
+
+# Dependencies (none currently checked in, excluded defensively)
+node_modules
+package.json
+package-lock.json
+
+# Server-side Worker source — no reason to serve this publicly
+worker/
+
+# This file itself
+.assetsignore
