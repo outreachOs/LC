@@ -237,16 +237,27 @@ async function handleNotify(request, env) {
 
   const token = env.TELEGRAM_BOT_TOKEN;
   const chatId = env.TELEGRAM_CHAT_ID;
+
+  // Log whether each secret is present — booleans only, never the actual
+  // values — so a 500 here can be diagnosed from Cloudflare's Worker logs
+  // without ever risking the token/chat ID appearing in a log line.
+  console.error('worker/index.js: secret presence check', {
+    hasToken: Boolean(token),
+    hasChatId: Boolean(chatId),
+  });
+
   if (!token || !chatId) {
     // Do not leak configuration details to the browser — log server-side
     // only (visible in Cloudflare's Worker logs) and return a generic error.
-    console.error('worker/index.js: missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID secret binding');
+    console.error('worker/index.js: missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID secret binding — has this Worker had the secrets set via `wrangler secret put` / the dashboard Variables and Secrets screen?');
     return jsonError('Lead notification is temporarily unavailable. Please call instead.', 500, origin);
   }
 
+  let tgRes;
+  let tgBodyText;
   let tgJson;
   try {
-    const tgRes = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    tgRes = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -256,15 +267,42 @@ async function handleNotify(request, env) {
         disable_web_page_preview: true,
       }),
     });
-    tgJson = await tgRes.json();
+    // Read as text first so we can still log something useful even if
+    // Telegram ever returns a non-JSON body (e.g. an HTML error page
+    // during an outage) — JSON.parse on that would otherwise throw here
+    // and land us in the generic catch block below with less detail.
+    tgBodyText = await tgRes.text();
+    try {
+      tgJson = JSON.parse(tgBodyText);
+    } catch (parseErr) {
+      console.error('worker/index.js: Telegram response was not valid JSON', {
+        status: tgRes.status,
+        statusText: tgRes.statusText,
+        bodyText: tgBodyText,
+      });
+      return jsonError('Lead notification is temporarily unavailable. Please call instead.', 502, origin);
+    }
   } catch (e) {
-    console.error('worker/index.js: Telegram request failed', e);
+    // Real exception from the fetch() call itself (network failure, DNS,
+    // timeout, etc.) — log the actual error server-side only.
+    console.error('worker/index.js: Telegram request threw an exception', {
+      message: e && e.message,
+      name: e && e.name,
+      stack: e && e.stack,
+    });
     return jsonError('Lead notification is temporarily unavailable. Please call instead.', 502, origin);
   }
 
   if (!tgJson || tgJson.ok !== true) {
-    // Log the real Telegram error server-side only; never forward it to the browser.
-    console.error('worker/index.js: Telegram API rejected the message', tgJson);
+    // Log the real Telegram API status and response body server-side only —
+    // this is where Telegram tells you *why* it rejected the message (bad
+    // token, bot not started/blocked, wrong chat_id, etc.) — never forward
+    // any of this to the browser.
+    console.error('worker/index.js: Telegram API rejected the message', {
+      status: tgRes.status,
+      statusText: tgRes.statusText,
+      body: tgJson,
+    });
     return jsonError('Lead notification is temporarily unavailable. Please call instead.', 502, origin);
   }
 
