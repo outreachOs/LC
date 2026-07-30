@@ -5,26 +5,20 @@
    Cloudflare Pages / any static host)
    ═══════════════════════════════════════ */
 
-const TG_TOKEN   = '8798074297:AAE5Jb9Yx0xrGeHnFYdz1tuE7b9MpLzxVn4';
-const TG_CHAT_ID = '7676485257';
-const TG_URL     = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage`;
-
-async function sendTelegram(text) {
+// Lead notifications are sent via the server-side /notify Cloudflare Pages
+// Function (see functions/notify.js), which holds the Telegram credentials.
+// The browser never sees the bot token or chat ID.
+async function sendLead(type, data) {
   try {
-    const res = await fetch(TG_URL, {
+    const res = await fetch('/notify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: TG_CHAT_ID,
-        text: text,
-        parse_mode: 'HTML',
-        disable_web_page_preview: true
-      })
+      body: JSON.stringify({ type, data })
     });
-    const data = await res.json();
-    return data.ok === true;
+    const json = await res.json();
+    return json.ok === true;
   } catch (e) {
-    console.warn('Telegram send error:', e);
+    console.warn('Lead notification error:', e);
     return false;
   }
 }
@@ -72,14 +66,8 @@ async function sendChat() {
   input.value = '';
   msgs.scrollTop = msgs.scrollHeight;
 
-  // Fire to Telegram
-  sendTelegram(
-    `💬 <b>WEBSITE CHAT</b>\n` +
-    `━━━━━━━━━━━━━━━━━━\n` +
-    `💬 <b>Message:</b> ${escHtml(text)}\n` +
-    `━━━━━━━━━━━━━━━━━━\n` +
-    `⚡ Reply: https://wa.me/447865449983`
-  );
+  // Send to lead notification endpoint (server-side formats the Telegram message)
+  sendLead('chat', { message: text });
 
   setTimeout(() => {
     msgs.innerHTML += `<div class="cmsg bot">${BOT_REPLIES[botIdx % BOT_REPLIES.length]}</div>`;
@@ -198,23 +186,16 @@ async function submitBooking() {
   const btn = document.querySelector('.form-submit');
   if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
 
-  await sendTelegram(
-    `📅 <b>NEW BOOKING REQUEST</b>\n` +
-    `━━━━━━━━━━━━━━━━━━\n` +
-    `👤 <b>Name:</b> ${escHtml(name)}\n` +
-    `📞 <b>Phone:</b> ${escHtml(phone)}\n` +
-    `🔧 <b>Service:</b> ${escHtml(service)}\n` +
-    `📍 <b>Pickup:</b> ${escHtml(from)}\n` +
-    `🏁 <b>Drop-off:</b> ${escHtml(to||'Not specified')}\n` +
-    `🚗 <b>Vehicle:</b> ${escHtml(vehicle||'Not specified')}\n` +
-    `📆 <b>Date:</b> ${escHtml(date||'Not specified')}\n` +
-    `🕐 <b>Time:</b> ${escHtml(time)}\n` +
-    `📝 <b>Notes:</b> ${escHtml(notes||'None')}\n` +
-    `━━━━━━━━━━━━━━━━━━\n` +
-    `⚡ <b>Call back:</b> <a href="tel:${escHtml(phone)}">${escHtml(phone)}</a>`
-  );
+  const bookingSent = await sendLead('booking', {
+    name, phone, service, from, to, vehicle, date, time, notes
+  });
 
   if (btn) { btn.disabled = false; btn.textContent = 'Send Booking Request →'; }
+
+  if (!bookingSent) {
+    showToast("Sorry, that didn't send. Please call 07865 449983 directly and Kris will take your booking.", 'error');
+    return;
+  }
 
   const modal = document.getElementById('bookingModal');
   if (modal) modal.classList.add('open');
@@ -246,18 +227,14 @@ async function submitContact() {
   const btn = document.querySelector('.form-submit');
   if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
 
-  await sendTelegram(
-    `✉️ <b>CONTACT FORM</b>\n` +
-    `━━━━━━━━━━━━━━━━━━\n` +
-    `👤 <b>Name:</b> ${escHtml(name)}\n` +
-    `📞 <b>Phone:</b> ${escHtml(phone)}\n` +
-    `📋 <b>Subject:</b> ${escHtml(subject)}\n` +
-    `💬 <b>Message:</b> ${escHtml(message)}\n` +
-    `━━━━━━━━━━━━━━━━━━\n` +
-    `⚡ <a href="tel:${escHtml(phone)}">${escHtml(phone)}</a>`
-  );
+  const contactSent = await sendLead('contact', { name, phone, subject, message });
 
   if (btn) { btn.disabled = false; btn.textContent = 'Send Message →'; }
+
+  if (!contactSent) {
+    showToast("Sorry, that didn't send. Please call 07865 449983 directly.", 'error');
+    return;
+  }
 
   const modal = document.getElementById('contactModal');
   if (modal) modal.classList.add('open');
@@ -299,12 +276,14 @@ function escHtml(str) {
 }
 
 // ── ACTIVE NAV LINK ──
+// Compares against the current extensionless canonical path rather than a
+// .html filename, since internal links now point directly at canonical URLs.
 document.addEventListener('DOMContentLoaded', function() {
-  const page = window.location.pathname.split('/').pop() || 'index.html';
+  const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
   document.querySelectorAll('.nav-links a, .mobile-nav a').forEach(a => {
     a.classList.remove('active');
-    const href = a.getAttribute('href') || '';
-    if (href === page || (page === '' && href === 'index.html') || (page === 'index.html' && href === 'index.html')) {
+    const href = (a.getAttribute('href') || '').replace(/\/+$/, '') || '/';
+    if (href === currentPath) {
       a.classList.add('active');
     }
   });
@@ -366,24 +345,17 @@ async function submitCallback(nameId, phoneId, successId, submitBtnId, jobType) 
   if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
 
   const type = jobType || 'callback';
-  const label = type === 'prebook' ? '📅 PRE-BOOK REQUEST' : '📞 CALLBACK REQUEST';
 
-  await sendTelegram(
-    `${label}
-` +
-    `━━━━━━━━━━━━━━━━━━
-` +
-    `👤 <b>Name:</b> ${escHtml(name)}
-` +
-    `📞 <b>Phone:</b> ${escHtml(phone)}
-` +
-    `━━━━━━━━━━━━━━━━━━
-` +
-    `⚡ <a href="tel:${escHtml(phone.replace(/\s/g,''))}">${escHtml(phone)}</a>`
-  );
+  const callbackSent = await sendLead('callback', { name, phone, jobType: type });
 
   // Show success
   if (btn) { btn.disabled = false; btn.textContent = 'Request Callback →'; }
+
+  if (!callbackSent) {
+    showToast('Sorry, that didn\'t send. Please call 07865 449983 directly.', 'error');
+    return;
+  }
+
   const successEl = document.getElementById(successId);
   if (successEl) {
     successEl.classList.add('show');

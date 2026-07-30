@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0d1b2a">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/svg+xml" sizes="32x32" href="favicon-32.svg">
@@ -36,11 +36,11 @@
     <a href="/" class="nav-logo">Kris Recovery<span>Leicester's Trusted Recovery</span></a>
     <ul class="nav-links">
       <li><a href="/">Home</a></li>
-      <li><a href="services.html">Services</a></li>
-      <li><a href="booking.html" class="active">Book a Job</a></li>
-      <li><a href="guides.html">Car Guides</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="contact.html">Contact</a></li>
+      <li><a href="/services">Services</a></li>
+      <li><a href="/booking" class="active">Book a Job</a></li>
+      <li><a href="/guides">Car Guides</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/contact">Contact</a></li>
     </ul>
     <a href="tel:07865449983" class="nav-phone">📞 07865 449983</a>
     <button class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
@@ -48,7 +48,7 @@
 </nav>
 <nav class="mobile-nav" id="mobileNav">
   <div class="mobile-nav-top"><div class="mobile-nav-logo">Kris <span>Recovery</span></div><button class="mobile-nav-close" onclick="toggleMenu()">✕</button></div>
-  <a href="/" onclick="toggleMenu()">Home</a><a href="services.html" onclick="toggleMenu()">Services</a><a href="booking.html" onclick="toggleMenu()">Book a Job</a><a href="guides.html" onclick="toggleMenu()">Car Guides</a><a href="about.html" onclick="toggleMenu()">About Us</a><a href="contact.html" onclick="toggleMenu()">Contact</a>
+  <a href="/" onclick="toggleMenu()">Home</a><a href="/services" onclick="toggleMenu()">Services</a><a href="/booking" onclick="toggleMenu()">Book a Job</a><a href="/guides" onclick="toggleMenu()">Car Guides</a><a href="/about" onclick="toggleMenu()">About Us</a><a href="/contact" onclick="toggleMenu()">Contact</a>
   <a href="tel:07865449983" class="mobile-call">🚨 Call: 07865 449983</a>
 </nav>
 
@@ -68,7 +68,9 @@
           <h3>Request a Free Callback</h3>
           <p>Leave your name and number. Kris calls you back within minutes — no hold music, no call centres. Works for both emergencies and pre-planned jobs.</p>
           <div class="qcb-form">
+            <label class="sr-only" for="bkName">Your name</label>
             <input type="text" class="qcb-input" id="bkName"  placeholder="Your name"   autocomplete="name" style="margin-bottom:0">
+            <label class="sr-only" for="bkPhone">Your phone number</label>
             <input type="tel"  class="qcb-input" id="bkPhone" placeholder="Your number" autocomplete="tel">
             <button class="qcb-submit" id="bkBtn" onclick="submitCallback('bkName','bkPhone','bkSuccess','bkBtn','callback')">📞 Request Free Callback →</button>
             <div class="qcb-success" id="bkSuccess">
@@ -124,13 +126,13 @@
       <div class="form-card">
         <div class="form-card-title">📅 Request a Booking</div>
 
-        <div class="form-group"><label>Your Name *</label><input type="text" id="bName" placeholder="e.g. John Smith" required autocomplete="name"></div>
+        <div class="form-group"><label for="bName">Your Name *</label><input type="text" id="bName" placeholder="e.g. John Smith" required autocomplete="name"></div>
         <div class="form-row">
-          <div class="form-group"><label>Phone Number *</label><input type="tel" id="bPhone" placeholder="07xxx xxxxxx" required autocomplete="tel"></div>
-          <div class="form-group"><label>Email Address</label><input type="email" id="bEmail" placeholder="your@email.co.uk" autocomplete="email"></div>
+          <div class="form-group"><label for="bPhone">Phone Number *</label><input type="tel" id="bPhone" placeholder="07xxx xxxxxx" required autocomplete="tel"></div>
+          <div class="form-group"><label for="bEmail">Email Address</label><input type="email" id="bEmail" placeholder="your@email.co.uk" autocomplete="email"></div>
         </div>
         <div class="form-group">
-          <label>Service Type *</label>
+          <label for="bService">Service Type *</label>
           <select id="bService">
             <option value="">Select a service...</option>
             <option>Emergency Breakdown Recovery</option>
@@ -144,10 +146,10 @@
           </select>
         </div>
         <div class="form-row">
-          <div class="form-group"><label>Pickup Location *</label><input type="text" id="bFrom" placeholder="Street or postcode"></div>
-          <div class="form-group"><label>Drop-off Location</label><input type="text" id="bTo" placeholder="Garage name or address"></div>
+          <div class="form-group"><label for="bFrom">Pickup Location *</label><input type="text" id="bFrom" placeholder="Street or postcode"></div>
+          <div class="form-group"><label for="bTo">Drop-off Location</label><input type="text" id="bTo" placeholder="Garage name or address"></div>
         </div>
-        <div class="form-group"><label>Vehicle (make, model, colour)</label><input type="text" id="bVehicle" placeholder="e.g. 2018 Ford Focus, Silver"></div>
+        <div class="form-group"><label for="bVehicle">Vehicle (make, model, colour)</label><input type="text" id="bVehicle" placeholder="e.g. 2018 Ford Focus, Silver"></div>
 
         <!-- Calendar -->
         <div class="form-group">
@@ -169,7 +171,7 @@
           </div>
         </div>
 
-        <div class="form-group"><label>Additional Notes</label><textarea id="bNotes" placeholder="Any extra details about the job..."></textarea></div>
+        <div class="form-group"><label for="bNotes">Additional Notes</label><textarea id="bNotes" placeholder="Any extra details about the job..."></textarea></div>
         <button class="form-submit" onclick="submitBooking()">Send Booking Request →</button>
         <p class="form-note">📞 Kris will call or text to confirm · No payment taken online</p>
       </div>
@@ -182,17 +184,17 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand"><div class="footer-logo-txt">Kris <span>Recovery</span></div><p>Leicester's trusted 24/7 car and van recovery service. Call Kris directly — no call centres.</p><a href="tel:07865449983" class="footer-phone-link">📞 07865 449983</a></div>
-      <div class="footer-col"><h4>Services</h4><ul><li><a href="services.html">Emergency Recovery</a></li><li><a href="services.html">Accident Recovery</a></li><li><a href="services.html">Vehicle Towing</a></li><li><a href="booking.html">Pre-Booked Transport</a></li></ul></div>
-      <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="/">Home</a></li><li><a href="guides.html">Car Guides</a></li><li><a href="about.html">About Kris</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+      <div class="footer-col"><h4>Services</h4><ul><li><a href="/services">Emergency Recovery</a></li><li><a href="/services">Accident Recovery</a></li><li><a href="/services">Vehicle Towing</a></li><li><a href="/booking">Pre-Booked Transport</a></li></ul></div>
+      <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="/">Home</a></li><li><a href="/guides">Car Guides</a></li><li><a href="/about">About Kris</a></li><li><a href="/contact">Contact</a></li></ul></div>
       <div class="footer-col"><h4>Contact</h4><ul><li><a href="tel:07865449983">07865 449983</a></li><li><a href="https://wa.me/447865449983">WhatsApp</a></li><li>Leicester, LE1</li><li>24/7 Available</li></ul></div>
     
 <div class="footer-col"><h4>Area Pages</h4><ul>
-<li><a href="car-recovery-wigston.html">Car Recovery Wigston</a></li>
-<li><a href="car-recovery-oadby.html">Car Recovery Oadby</a></li>
-<li><a href="car-recovery-braunstone.html">Car Recovery Braunstone</a></li>
-<li><a href="car-recovery-loughborough.html">Car Recovery Loughborough</a></li>
-<li><a href="car-recovery-hinckley.html">Car Recovery Hinckley</a></li>
-<li><a href="breakdown-recovery-m1-leicester.html">M1 Recovery Leicester</a></li>
+<li><a href="/car-recovery-wigston">Car Recovery Wigston</a></li>
+<li><a href="/car-recovery-oadby">Car Recovery Oadby</a></li>
+<li><a href="/car-recovery-braunstone">Car Recovery Braunstone</a></li>
+<li><a href="/car-recovery-loughborough">Car Recovery Loughborough</a></li>
+<li><a href="/car-recovery-hinckley">Car Recovery Hinckley</a></li>
+<li><a href="/breakdown-recovery-m1-leicester">M1 Recovery Leicester</a></li>
 </ul></div>
     </div>
     <div class="footer-bottom"><div>© 2026 Kris Car and Van Recovery Leicester</div><div><a href="tel:07865449983">07865 449983</a> · 24/7</div></div>
@@ -205,7 +207,7 @@
   <div class="chat-head"><div class="chat-av">K</div><div class="chat-head-info"><div class="chat-hn">Kris — Recovery Leicester</div><div class="chat-hs">Usually replies within minutes</div></div><button class="chat-close" onclick="toggleChat()">✕</button></div>
   <div class="chat-msgs" id="chatMsgs"><div class="cmsg bot">Hi! Need help with a booking? Or for emergencies call <strong>07865 449983</strong> 🚨</div></div>
   <a href="https://wa.me/447865449983" target="_blank" rel="noopener noreferrer" class="chat-wa">💬 Continue on WhatsApp</a>
-  <div class="chat-inp-wrap"><input type="text" class="chat-inp" id="chatInput" placeholder="Type a message..."><button class="chat-send" onclick="sendChat()">→</button></div>
+  <div class="chat-inp-wrap"><input type="text" class="chat-inp" id="chatInput" placeholder="Type a message..." aria-label="Chat message"><button class="chat-send" onclick="sendChat()">→</button></div>
 </div>
 <div class="modal-overlay" id="bookingModal"><div class="modal-box"><div class="modal-ico">✅</div><h3>Booking Request Sent!</h3><p>Kris will call or text you shortly to confirm your slot and price. For urgent recovery, call <strong>07865 449983</strong> directly.</p><button class="modal-close" onclick="closeModal('bookingModal')">Close</button></div></div>
 
@@ -226,7 +228,9 @@
   <p>Leave your name and number — Kris will call you back within minutes.</p>
   <div class="qcb-form">
     <div class="qcb-row">
+      <label class="sr-only" for="cbName">Your name</label>
       <input type="text"  class="qcb-input" id="cbName"  placeholder="Your name"   autocomplete="name">
+      <label class="sr-only" for="cbPhone">Your phone number</label>
       <input type="tel"   class="qcb-input" id="cbPhone" placeholder="Your number" autocomplete="tel">
     </div>
     <button class="qcb-submit" id="drawerBtn" onclick="submitCallback('cbName','cbPhone','drawerSuccess','drawerBtn','callback')">Request Callback →</button>

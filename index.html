@@ -72,6 +72,26 @@
   ]
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": "https://www.leicester-car-recovery.co.uk/#business",
+  "name": "Kris Car and Van Recovery Leicester",
+  "url": "https://www.leicester-car-recovery.co.uk/",
+  "telephone": "07865449983",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "120a Granby Street",
+    "addressLocality": "Leicester",
+    "addressRegion": "Leicestershire",
+    "postalCode": "LE1 1DL",
+    "addressCountry": "GB"
+  },
+  "areaServed": ["Leicester", "Leicestershire"],
+  "sameAs": ["https://www.yell.com/biz/leicester-car-recovery-leicester-11047157/"]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -86,11 +106,11 @@
     <a href="/" class="nav-logo">Kris Recovery<span>Leicester's Trusted Recovery</span></a>
     <ul class="nav-links">
       <li><a href="/" class="active">Home</a></li>
-      <li><a href="services.html">Services</a></li>
-      <li><a href="booking.html">Book a Job</a></li>
-      <li><a href="guides.html">Car Guides</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="contact.html">Contact</a></li>
+      <li><a href="/services">Services</a></li>
+      <li><a href="/booking">Book a Job</a></li>
+      <li><a href="/guides">Car Guides</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/contact">Contact</a></li>
     </ul>
     <a href="tel:07865449983" class="nav-phone">📞 07865 449983</a>
     <button class="hamburger" onclick="toggleMenu()" aria-label="Open menu"><span></span><span></span><span></span></button>
@@ -103,11 +123,11 @@
     <button class="mobile-nav-close" onclick="toggleMenu()">✕</button>
   </div>
   <a href="/" onclick="toggleMenu()">Home</a>
-  <a href="services.html" onclick="toggleMenu()">Services</a>
-  <a href="booking.html" onclick="toggleMenu()">Book a Job</a>
-  <a href="guides.html" onclick="toggleMenu()">Car Guides</a>
-  <a href="about.html" onclick="toggleMenu()">About Us</a>
-  <a href="contact.html" onclick="toggleMenu()">Contact</a>
+  <a href="/services" onclick="toggleMenu()">Services</a>
+  <a href="/booking" onclick="toggleMenu()">Book a Job</a>
+  <a href="/guides" onclick="toggleMenu()">Car Guides</a>
+  <a href="/about" onclick="toggleMenu()">About Us</a>
+  <a href="/contact" onclick="toggleMenu()">Contact</a>
   <a href="tel:07865449983" class="mobile-call">🚨 Call Now: 07865 449983</a>
 </nav>
 
@@ -126,7 +146,7 @@
     <p style="font-size:clamp(1rem,2vw,1.2rem);color:rgba(255,255,255,0.78);max-width:520px;margin-bottom:30px;line-height:1.68">Need Leicester car recovery or van recovery? We cover all of Leicester and Leicestershire 24 hours a day, 7 days a week. Fast, reliable and locally trusted.</p>
     <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:36px">
       <a href="tel:07865449983" class="btn btn-emergency btn-xl">🚨 Emergency: 07865 449983</a>
-      <a href="booking.html" class="btn btn-primary btn-lg">📅 Pre-Book a Job</a>
+      <a href="/booking" class="btn btn-primary btn-lg">📅 Pre-Book a Job</a>
     </div>
     <div style="display:flex;gap:12px;flex-wrap:wrap">
       <div style="display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);border-radius:40px;padding:7px 14px;font-size:0.82rem;font-weight:600;color:rgba(255,255,255,0.88)">⚡ 30–60 Min Response</div>
@@ -140,7 +160,9 @@
   <div class="lead-widget-title"><span>📋</span> Free Callback — 2 Fields Only</div>
   <div class="qcb-form">
     <div class="qcb-row">
+      <label class="sr-only" for="hwName">Your name</label>
       <input type="text" class="qcb-input" id="hwName"  placeholder="Your name"   autocomplete="name">
+      <label class="sr-only" for="hwPhone">Your phone number</label>
       <input type="tel"  class="qcb-input" id="hwPhone" placeholder="Your number" autocomplete="tel">
     </div>
     <button class="qcb-submit" id="heroBtn" onclick="submitCallback('hwName','hwPhone','heroSuccess','heroBtn','callback')">📞 Request Free Callback →</button>
@@ -178,27 +200,27 @@
     <div class="svc-grid">
       <div class="svc-card">
         <div class="svc-img"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80&auto=format&fit=crop" alt="Emergency car recovery Leicester 24/7" loading="lazy"><span class="svc-badge badge-red">🚨 Emergency</span></div>
-        <div class="svc-body"><h3><a href="services.html" style="color:inherit;text-decoration:none">Emergency Breakdown Recovery</a></h3><p>Engine failure, undriveable vehicle, or any breakdown — day or night, fast response across Leicester and Leicestershire.</p><a href="services.html" class="svc-link">Full details →</a></div>
+        <div class="svc-body"><h3><a href="/services" style="color:inherit;text-decoration:none">Emergency Breakdown Recovery</a></h3><p>Engine failure, undriveable vehicle, or any breakdown — day or night, fast response across Leicester and Leicestershire.</p><a href="/services" class="svc-link">Full details →</a></div>
       </div>
       <div class="svc-card">
         <div class="svc-img"><img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=600&q=80&auto=format&fit=crop" alt="Car towing service Leicester" loading="lazy"><span class="svc-badge badge-navy">🚚 Towing</span></div>
-        <div class="svc-body"><h3>Vehicle Towing &amp; Transport</h3><p>Safe, secure towing of your car or van to any garage, home or dealership across Leicestershire and beyond.</p><a href="services.html" class="svc-link">Leicester towing service →</a></div>
+        <div class="svc-body"><h3>Vehicle Towing &amp; Transport</h3><p>Safe, secure towing of your car or van to any garage, home or dealership across Leicestershire and beyond.</p><a href="/services" class="svc-link">Leicester towing service →</a></div>
       </div>
       <div class="svc-card">
         <div class="svc-img"><img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&q=80&auto=format&fit=crop" alt="Pre-booked vehicle recovery Leicester" loading="lazy"><span class="svc-badge badge-grn">📅 Pre-Book</span></div>
-        <div class="svc-body"><h3>Pre-Booked Recovery &amp; Collection</h3><p>Non-emergency transport, project car collection, garage drops, auction pickups — scheduled at a time that suits you.</p><a href="booking.html" class="svc-link">Book car recovery Leicester →</a></div>
+        <div class="svc-body"><h3>Pre-Booked Recovery &amp; Collection</h3><p>Non-emergency transport, project car collection, garage drops, auction pickups — scheduled at a time that suits you.</p><a href="/booking" class="svc-link">Book car recovery Leicester →</a></div>
       </div>
       <div class="svc-card">
         <div class="svc-img"><img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=600&q=80&auto=format&fit=crop" alt="Accident recovery Leicester" loading="lazy"><span class="svc-badge badge-red">💥 Accident</span></div>
-        <div class="svc-body"><h3>Accident Recovery</h3><p>We attend accident scenes across Leicestershire, recover damaged vehicles carefully and clear roads fast.</p><a href="services.html" class="svc-link">Accident recovery Leicester →</a></div>
+        <div class="svc-body"><h3>Accident Recovery</h3><p>We attend accident scenes across Leicestershire, recover damaged vehicles carefully and clear roads fast.</p><a href="/services" class="svc-link">Accident recovery Leicester →</a></div>
       </div>
       <div class="svc-card">
         <div class="svc-img"><img src="https://images.unsplash.com/photo-1615906655593-ad0386982a0f?w=600&q=80&auto=format&fit=crop" alt="Roadside assistance flat tyre battery Leicester" loading="lazy"><span class="svc-badge badge-navy">🔧 Roadside</span></div>
-        <div class="svc-body"><h3>Roadside Assistance</h3><p>Flat tyre, dead battery, locked out, run out of fuel — quick fixes to get you moving without a full tow.</p><a href="services.html" class="svc-link">Breakdown recovery Leicester →</a></div>
+        <div class="svc-body"><h3>Roadside Assistance</h3><p>Flat tyre, dead battery, locked out, run out of fuel — quick fixes to get you moving without a full tow.</p><a href="/services" class="svc-link">Breakdown recovery Leicester →</a></div>
       </div>
       <div class="svc-card">
         <div class="svc-img"><img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=600&q=80&auto=format&fit=crop" alt="Van recovery Leicester commercial vehicle" loading="lazy"><span class="svc-badge badge-navy">🚐 Van Recovery</span></div>
-        <div class="svc-body"><h3>Van &amp; Commercial Recovery</h3><p>Tradesmen and delivery drivers — we recover vans and light commercials. Don't let a breakdown ruin your working day.</p><a href="services.html" class="svc-link">Van recovery Leicester →</a></div>
+        <div class="svc-body"><h3>Van &amp; Commercial Recovery</h3><p>Tradesmen and delivery drivers — we recover vans and light commercials. Don't let a breakdown ruin your working day.</p><a href="/services" class="svc-link">Van recovery Leicester →</a></div>
       </div>
     </div>
     <div class="highlight-box"><h3>Need Leicester Car Recovery Right Now?</h3><p>For fast Leicester car recovery or van recovery, a phone call is always quickest. Kris answers personally.</p><a href="tel:07865449983" class="btn btn-emergency btn-lg">🚨 Call 07865 449983 Now</a></div>
@@ -254,7 +276,10 @@
       <div class="tcard" style="background:var(--white);border-color:var(--border)"><div class="tcard-stars">★★★★★</div><p class="tcard-text" style="color:var(--text2)">"My van packed in on the M1 near Leicester — nightmare for a tradesman. Kris was professional, quick and saved me a fortune vs the big recovery firms."</p><div class="tcard-author"><div class="tcard-avatar">TC</div><div><div class="tcard-name" style="color:var(--navy)">Tom C.</div><div class="tcard-meta">Van Recovery · M1 Junction 21</div></div></div></div>
       <div class="tcard" style="background:var(--white);border-color:var(--border)"><div class="tcard-stars">★★★★★</div><p class="tcard-text" style="color:var(--text2)">"Used Kris to transport my non-running Golf to Loughborough. Fair price upfront, arrived exactly on time, handled the car carefully. Will definitely use again."</p><div class="tcard-author"><div class="tcard-avatar">SR</div><div><div class="tcard-name" style="color:var(--navy)">Sarah R.</div><div class="tcard-meta">Pre-Booked Transport · Oadby</div></div></div></div>
     </div>
-    <div style="text-align:center;margin-top:26px"><a href="about.html" class="btn btn-dark">Read More Reviews →</a></div>
+    <div style="text-align:center;margin-top:26px">
+      <a href="/about" class="btn btn-dark">Read More Reviews →</a>
+      <p style="margin-top:14px;font-size:0.84rem;color:var(--text3)"><a href="https://www.yell.com/biz/leicester-car-recovery-leicester-11047157/" target="_blank" rel="noopener noreferrer" aria-label="See our profile and reviews on Yell (opens in a new tab)">See our profile and reviews on Yell →</a></p>
+    </div>
   </div>
 </section>
 
@@ -356,37 +381,37 @@
       <p style="color:var(--text2);max-width:540px;margin:0 auto;font-size:0.95rem">We have dedicated coverage pages for every major area. Click your location for specific local information.</p>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px">
-      <a href="car-recovery-wigston.html" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
+      <a href="/car-recovery-wigston" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
         <span style="font-size:1.3rem">📍</span><div><div style="font-weight:700;font-size:0.92rem;color:var(--navy)">Car Recovery Wigston</div><div style="font-size:0.76rem;color:var(--text3)">A5199, A426, LE18</div></div>
       </a>
-      <a href="car-recovery-oadby.html" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
+      <a href="/car-recovery-oadby" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
         <span style="font-size:1.3rem">📍</span><div><div style="font-weight:700;font-size:0.92rem;color:var(--navy)">Car Recovery Oadby</div><div style="font-size:0.76rem;color:var(--text3)">A6 London Road, LE2</div></div>
       </a>
-      <a href="car-recovery-braunstone.html" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
+      <a href="/car-recovery-braunstone" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
         <span style="font-size:1.3rem">📍</span><div><div style="font-weight:700;font-size:0.92rem;color:var(--navy)">Car Recovery Braunstone</div><div style="font-size:0.76rem;color:var(--text3)">A47, Fosse Park, LE3</div></div>
       </a>
-      <a href="car-recovery-hinckley.html" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
+      <a href="/car-recovery-hinckley" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
         <span style="font-size:1.3rem">📍</span><div><div style="font-weight:700;font-size:0.92rem;color:var(--navy)">Car Recovery Hinckley</div><div style="font-size:0.76rem;color:var(--text3)">A47, A5, LE10</div></div>
       </a>
-      <a href="car-recovery-loughborough.html" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
+      <a href="/car-recovery-loughborough" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
         <span style="font-size:1.3rem">📍</span><div><div style="font-weight:700;font-size:0.92rem;color:var(--navy)">Car Recovery Loughborough</div><div style="font-size:0.76rem;color:var(--text3)">A6, M1 J23, LE11</div></div>
       </a>
-      <a href="car-recovery-birstall.html" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
+      <a href="/car-recovery-birstall" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
         <span style="font-size:1.3rem">📍</span><div><div style="font-weight:700;font-size:0.92rem;color:var(--navy)">Car Recovery Birstall</div><div style="font-size:0.76rem;color:var(--text3)">A6, A46, LE4 north</div></div>
       </a>
-      <a href="car-recovery-syston.html" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
+      <a href="/car-recovery-syston" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
         <span style="font-size:1.3rem">📍</span><div><div style="font-weight:700;font-size:0.92rem;color:var(--navy)">Car Recovery Syston</div><div style="font-size:0.76rem;color:var(--text3)">A607 Melton Road, LE7</div></div>
       </a>
-      <a href="car-recovery-thurmaston.html" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
+      <a href="/car-recovery-thurmaston" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
         <span style="font-size:1.3rem">📍</span><div><div style="font-weight:700;font-size:0.92rem;color:var(--navy)">Car Recovery Thurmaston</div><div style="font-size:0.76rem;color:var(--text3)">Industrial estate, LE4</div></div>
       </a>
-      <a href="car-recovery-market-harborough.html" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
+      <a href="/car-recovery-market-harborough" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
         <span style="font-size:1.3rem">📍</span><div><div style="font-weight:700;font-size:0.92rem;color:var(--navy)">Car Recovery Market Harborough</div><div style="font-size:0.76rem;color:var(--text3)">A6, LE16</div></div>
       </a>
-      <a href="car-recovery-coalville.html" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
+      <a href="/car-recovery-coalville" style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
         <span style="font-size:1.3rem">📍</span><div><div style="font-weight:700;font-size:0.92rem;color:var(--navy)">Car Recovery Coalville</div><div style="font-size:0.76rem;color:var(--text3)">A511, M1 J22, LE67</div></div>
       </a>
-      <a href="breakdown-recovery-m1-leicester.html" style="background:var(--navy);border:1.5px solid var(--navy);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px">
+      <a href="/breakdown-recovery-m1-leicester" style="background:var(--navy);border:1.5px solid var(--navy);border-radius:var(--r);padding:16px;text-decoration:none;transition:all 0.18s;display:flex;align-items:center;gap:10px">
         <span style="font-size:1.3rem">🚨</span><div><div style="font-weight:700;font-size:0.92rem;color:var(--yellow)">M1 Breakdown Recovery</div><div style="font-size:0.76rem;color:rgba(255,255,255,0.7)">Junctions 21, 21A &amp; 22</div></div>
       </a>
     </div>
@@ -397,15 +422,15 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand"><div class="footer-logo-txt">Kris <span>Recovery</span></div><p>Leicester car recovery and van recovery — trusted, 24/7, locally based. All of Leicestershire covered. Kris answers personally.</p><a href="tel:07865449983" class="footer-phone-link">📞 07865 449983</a></div>
-      <div class="footer-col"><h4>Services</h4><ul><li><a href="services.html">Emergency Recovery</a></li><li><a href="services.html">Accident Recovery</a></li><li><a href="services.html">Vehicle Towing</a></li><li><a href="services.html">Pre-Booked Transport</a></li><li><a href="services.html">Van Recovery</a></li><li><a href="services.html">Roadside Assistance</a></li></ul></div>
-      <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="/">Home</a></li><li><a href="booking.html">Book a Recovery</a></li><li><a href="guides.html">Car Guides</a></li><li><a href="about.html">About Kris</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+      <div class="footer-col"><h4>Services</h4><ul><li><a href="/services">Emergency Recovery</a></li><li><a href="/services">Accident Recovery</a></li><li><a href="/services">Vehicle Towing</a></li><li><a href="/services">Pre-Booked Transport</a></li><li><a href="/services">Van Recovery</a></li><li><a href="/services">Roadside Assistance</a></li></ul></div>
+      <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="/">Home</a></li><li><a href="/booking">Book a Recovery</a></li><li><a href="/guides">Car Guides</a></li><li><a href="/about">About Kris</a></li><li><a href="/contact">Contact</a></li></ul></div>
       <div class="footer-col"><h4>Area Pages</h4><ul>
-<li><a href="car-recovery-wigston.html">Car Recovery Wigston</a></li>
-<li><a href="car-recovery-oadby.html">Car Recovery Oadby</a></li>
-<li><a href="car-recovery-braunstone.html">Car Recovery Braunstone</a></li>
-<li><a href="car-recovery-loughborough.html">Car Recovery Loughborough</a></li>
-<li><a href="car-recovery-hinckley.html">Car Recovery Hinckley</a></li>
-<li><a href="breakdown-recovery-m1-leicester.html">M1 Recovery Leicester</a></li>
+<li><a href="/car-recovery-wigston">Car Recovery Wigston</a></li>
+<li><a href="/car-recovery-oadby">Car Recovery Oadby</a></li>
+<li><a href="/car-recovery-braunstone">Car Recovery Braunstone</a></li>
+<li><a href="/car-recovery-loughborough">Car Recovery Loughborough</a></li>
+<li><a href="/car-recovery-hinckley">Car Recovery Hinckley</a></li>
+<li><a href="/breakdown-recovery-m1-leicester">M1 Recovery Leicester</a></li>
 </ul></div>
     </div>
     <div class="footer-bottom"><div>© 2026 Kris Car and Van Recovery Leicester · All rights reserved</div><div>📞 <a href="tel:07865449983">07865 449983</a> · Available 24/7</div></div>
@@ -440,7 +465,9 @@
   <p>Leave your name and number — Kris will call you back within minutes.</p>
   <div class="qcb-form">
     <div class="qcb-row">
+      <label class="sr-only" for="cbName">Your name</label>
       <input type="text"  class="qcb-input" id="cbName"  placeholder="Your name"   autocomplete="name">
+      <label class="sr-only" for="cbPhone">Your phone number</label>
       <input type="tel"   class="qcb-input" id="cbPhone" placeholder="Your number" autocomplete="tel">
     </div>
     <button class="qcb-submit" id="drawerBtn" onclick="submitCallback('cbName','cbPhone','drawerSuccess','drawerBtn','callback')">Request Callback →</button>
