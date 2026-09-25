@@ -23,6 +23,80 @@ async function sendLead(type, data) {
   }
 }
 
+/* ══════════════════════
+   ANALYTICS & CONVERSION TRACKING
+   This file is loaded on every page of the site, so everything below
+   runs site-wide — there is no per-page setup and no page is excluded.
+
+   Google Tag Manager (GTM-TXZHJP3C) is loaded via the static snippet
+   in the <head> and <body> of every HTML page — it, not this file, is
+   the single mechanism that talks to Google. GA4 and Google Ads tags
+   (config + conversions) are configured entirely inside the GTM
+   container/console, not in code, so there is nothing here to swap
+   out if those tags change.
+
+   This file's only job is to push structured events onto the
+   dataLayer that GTM's own snippet already initialises:
+     - phone_click            — every tel: link click, site-wide
+     - callback_submit_success — every successful booking/callback
+                                  form submit (fires with the /notify
+                                  webhook)
+   GTM triggers on these event names to fire whatever GA4/Ads tags are
+   configured for them — nothing here can duplicate a tag load, since
+   this file never loads gtag.js or registers a destination itself.
+
+   No dynamic-number-insertion / call-tracking swap is implemented on
+   the phone number anywhere in this file — 07865 449983 is the one
+   number shown and dialled everywhere on the site.
+   ══════════════════════ */
+
+// Pushes one structured event onto GTM's dataLayer. Defensive dataLayer
+// init in case this ever runs before GTM's own snippet has (it won't,
+// in normal page order, but this keeps the push from throwing either way).
+function pushDataLayerEvent(eventName, params) {
+  window.dataLayer = window.dataLayer || [];
+  try { window.dataLayer.push(Object.assign({ event: eventName }, params || {})); } catch (e) {}
+}
+
+// Best-effort label for which on-page element a tel: link belongs to,
+// based on existing CSS classes/containers — no markup changes needed.
+function telLinkLocation(a) {
+  var cls = ' ' + (a.className || '') + ' ';
+  if (cls.indexOf(' nav-phone ') !== -1) return 'header_nav';
+  if (cls.indexOf(' mobile-call ') !== -1) return 'mobile_nav';
+  if (cls.indexOf(' float-call ') !== -1) return 'floating_button';
+  if (cls.indexOf(' slb-call ') !== -1) return 'sticky_bar';
+  if (cls.indexOf(' footer-phone-link ') !== -1) return 'footer';
+  if (cls.indexOf(' guide-cta ') !== -1) return 'guide_card';
+  if (a.closest && a.closest('.topbar')) return 'top_bar';
+  if (a.closest && a.closest('.emg-strip')) return 'emergency_strip';
+  if (a.closest && a.closest('.callback-drawer')) return 'callback_drawer';
+  if (a.closest && a.closest('.chat-window')) return 'chat_widget';
+  if (cls.indexOf(' btn-emergency ') !== -1 && cls.indexOf(' btn-xl ') !== -1) return 'hero_cta';
+  if (cls.indexOf(' btn-emergency ') !== -1) return 'emergency_button';
+  if (cls.indexOf(' btn-primary ') !== -1) return 'primary_button';
+  if (cls.indexOf(' btn-dark ') !== -1) return 'dark_button';
+  return 'content';
+}
+
+// One delegated listener, site-wide, covers every tel: link on every
+// page — including clicks landing on a child <span>/emoji inside the
+// anchor. Capture phase so it runs before the dialer opens. Exactly
+// one phone_click dataLayer push per click — never duplicated. The
+// number itself (07865 449983) is never rewritten — this only
+// observes clicks on the existing tel: links, it doesn't touch what
+// they display or dial.
+document.addEventListener('click', function (e) {
+  var a = (e.target && e.target.closest) ? e.target.closest('a[href]') : null;
+  if (!a) return;
+  if ((a.getAttribute('href') || '').indexOf('tel:') === 0) {
+    pushDataLayerEvent('phone_click', {
+      page_path: window.location.pathname,
+      link_location: telLinkLocation(a)
+    });
+  }
+}, true);
+
 // ── MOBILE MENU ──
 function toggleMenu() {
   const nav = document.getElementById('mobileNav');
@@ -200,6 +274,8 @@ async function submitBooking() {
   const modal = document.getElementById('bookingModal');
   if (modal) modal.classList.add('open');
 
+  pushDataLayerEvent('callback_submit_success', { page_path: window.location.pathname, form_location: 'booking_form' });
+
   ['bName','bPhone','bEmail','bFrom','bTo','bVehicle','bNotes'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
   });
@@ -359,6 +435,8 @@ async function submitCallback(nameId, phoneId, successId, submitBtnId, jobType) 
   const successEl = document.getElementById(successId);
   if (successEl) {
     successEl.classList.add('show');
+    var formLocation = successId === 'heroSuccess' ? 'hero_widget' : successId === 'drawerSuccess' ? 'callback_drawer' : successId === 'bkSuccess' ? 'booking_callback_box' : 'callback_form';
+    pushDataLayerEvent('callback_submit_success', { page_path: window.location.pathname, form_location: formLocation });
     nameEl.value = '';
     phoneEl.value = '';
   }
