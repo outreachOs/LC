@@ -16,5 +16,8 @@
 /favicon.svg
   Cache-Control: public, max-age=604800
 
+/call-recovery-logo.png
+  Cache-Control: public, max-age=604800
+
 /sitemap.xml
   Cache-Control: public, max-age=3600
