@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
 Sitemap: https://www.leicester-car-recovery.co.uk/sitemap.xml
+IndexNow: https://www.leicester-car-recovery.co.uk/682a127041e96f93fa2cccd1ed6de5ac.txt
