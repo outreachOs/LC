@@ -200,16 +200,21 @@ async function handleNotify(request, env) {
 
   } else if (type === 'chat') {
     const chatMessage = field(data.message, { required: true, maxLen: 2000 });
-    if (chatMessage === null) {
-      return jsonError('Missing chat message.', 400, origin);
+    const phone = field(data.phone, { required: true, maxLen: 30 });
+    if (chatMessage === null || phone === null) {
+      return jsonError('Missing chat message or phone.', 400, origin);
+    }
+    if (!PHONE_PATTERN.test(phone.replace(/\s/g, ''))) {
+      return jsonError('Please provide a valid UK phone number.', 400, origin);
     }
 
     message =
       `💬 <b>WEBSITE CHAT</b>\n` +
       `━━━━━━━━━━━━━━━━━━\n` +
+      `📞 <b>Phone:</b> ${esc(phone)}\n` +
       `💬 <b>Message:</b> ${esc(chatMessage)}\n` +
       `━━━━━━━━━━━━━━━━━━\n` +
-      `⚡ Reply: https://wa.me/447865449983`;
+      `⚡ <a href="tel:${esc(phone.replace(/\s/g, ''))}">${esc(phone)}</a>`;
 
   } else if (type === 'callback') {
     const name = field(data.name, { required: true, maxLen: 100 });
@@ -316,16 +321,26 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
+    // Canonicalize the apex domain to www — every page's <link rel="canonical">
+    // and the sitemap already only ever use the www host, but without this
+    // redirect the apex domain was serving an identical 200 directly (assets
+    // layer short-circuits the Worker), leaving two indexable copies of every
+    // page and splitting ranking/click signal between them (confirmed via the
+    // Search Console export: the apex homepage was tracked as a separate URL).
+    // wrangler.jsonc sets assets.run_worker_first = true so this Worker runs
+    // on every request, including ones that would otherwise be served as a
+    // static asset without ever reaching this code.
+    if (url.hostname === 'leicester-car-recovery.co.uk' && url.pathname !== '/notify') {
+      url.hostname = 'www.leicester-car-recovery.co.uk';
+      return Response.redirect(url.toString(), 301);
+    }
+
     if (url.pathname === '/notify') {
       return handleNotify(request, env);
     }
 
     // Everything else is the static site — served from the assets bucket
-    // configured in wrangler.jsonc. In normal operation the platform
-    // already serves matching static files before this Worker ever runs
-    // (run_worker_first defaults to false), so in practice this line is
-    // mainly reached for genuine 404s; env.ASSETS.fetch() handles those
-    // the same way a plain static-assets deployment would.
+    // configured in wrangler.jsonc.
     return env.ASSETS.fetch(request);
   },
 };

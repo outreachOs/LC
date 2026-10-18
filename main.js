@@ -129,19 +129,30 @@ function toggleChat() {
 }
 
 async function sendChat() {
-  const input = document.getElementById('chatInput');
-  const msgs  = document.getElementById('chatMsgs');
+  const input      = document.getElementById('chatInput');
+  const phoneInput = document.getElementById('chatPhone');
+  const msgs       = document.getElementById('chatMsgs');
   if (!input || !msgs) return;
 
   const text = input.value.trim();
   if (!text) return;
+
+  // A phone number is required so the lead that lands in Telegram can
+  // actually be called/texted back — without it there is no way to
+  // reply to a chat-widget message.
+  const phone = phoneInput ? phoneInput.value.trim() : '';
+  if (!phone || !/^[0-9 +]{10,14}$/.test(phone.replace(/\s/g, ''))) {
+    showToast('Please add your phone number so we can get back to you.', 'error');
+    if (phoneInput) phoneInput.focus();
+    return;
+  }
 
   msgs.innerHTML += `<div class="cmsg user">${escHtml(text)}</div>`;
   input.value = '';
   msgs.scrollTop = msgs.scrollHeight;
 
   // Send to lead notification endpoint (server-side formats the Telegram message)
-  sendLead('chat', { message: text });
+  sendLead('chat', { message: text, phone });
 
   setTimeout(() => {
     msgs.innerHTML += `<div class="cmsg bot">${BOT_REPLIES[botIdx % BOT_REPLIES.length]}</div>`;
@@ -151,7 +162,12 @@ async function sendChat() {
 }
 
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && document.activeElement && document.activeElement.id === 'chatInput') {
+  if (e.key !== 'Enter' || !document.activeElement) return;
+  if (document.activeElement.id === 'chatPhone') {
+    e.preventDefault();
+    const chatInput = document.getElementById('chatInput');
+    if (chatInput) chatInput.focus();
+  } else if (document.activeElement.id === 'chatInput') {
     e.preventDefault();
     sendChat();
   }
