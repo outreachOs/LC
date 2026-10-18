@@ -35,15 +35,20 @@ async function sendLead(type, data) {
    container/console, not in code, so there is nothing here to swap
    out if those tags change.
 
-   This file's only job is to push structured events onto the
-   dataLayer that GTM's own snippet already initialises:
+   This file pushes structured events onto GTM's dataLayer and sends
+   the matching lead actions to Microsoft Advertising UET (97276506):
      - phone_click            — every tel: link click, site-wide
+     - whatsapp_click         — every WhatsApp link click, site-wide
      - callback_submit_success — every successful booking/callback
                                   form submit (fires with the /notify
                                   webhook)
-   GTM triggers on these event names to fire whatever GA4/Ads tags are
-   configured for them — nothing here can duplicate a tag load, since
-   this file never loads gtag.js or registers a destination itself.
+     - contact_submit_success — successful contact form submissions
+     - chat_submit_success    — successful chat-widget submissions
+
+   GTM continues to handle Google. Microsoft UET is loaded once here
+   and records phone_click, whatsapp_click and lead_submit actions.
+   Microsoft consent defaults to denied and is updated only after the
+   visitor makes a choice in the small advertising-cookie banner.
 
    No dynamic-number-insertion / call-tracking swap is implemented on
    the phone number anywhere in this file — 07865 449983 is the one
@@ -58,9 +63,110 @@ function pushDataLayerEvent(eventName, params) {
   try { window.dataLayer.push(Object.assign({ event: eventName }, params || {})); } catch (e) {}
 }
 
+// Microsoft Advertising UET. Loading it from this shared file covers every
+// site page while leaving the existing GTM/Google setup untouched.
+var MICROSOFT_UET_TAG_ID = '97276506';
+var MICROSOFT_CONSENT_KEY = 'lcr_ms_ads_consent_v1';
+
+function getMicrosoftAdsConsent() {
+  try { return window.localStorage.getItem(MICROSOFT_CONSENT_KEY); } catch (e) { return null; }
+}
+
+function setMicrosoftAdsConsent(value) {
+  try { window.localStorage.setItem(MICROSOFT_CONSENT_KEY, value); } catch (e) {}
+  window.uetq = window.uetq || [];
+  window.uetq.push('consent', 'update', { ad_storage: value });
+  var banner = document.getElementById('msAdsConsent');
+  if (banner) banner.remove();
+}
+
+function showMicrosoftAdsConsent() {
+  if (document.getElementById('msAdsConsent') || getMicrosoftAdsConsent()) return;
+  var banner = document.createElement('div');
+  banner.id = 'msAdsConsent';
+  banner.setAttribute('role', 'dialog');
+  banner.setAttribute('aria-label', 'Advertising cookie choices');
+  banner.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:10050;max-width:620px;margin:auto;background:#0d1b2a;color:#fff;border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:15px 16px;box-shadow:0 10px 35px rgba(0,0,0,.35);font:14px/1.45 Arial,sans-serif;';
+  banner.innerHTML = '<div style="font-weight:700;margin-bottom:5px">Advertising measurement</div>' +
+    '<div style="color:rgba(255,255,255,.82);margin-bottom:12px">Allow Microsoft Advertising cookies so we can measure calls and enquiries from our adverts.</div>' +
+    '<div style="display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap">' +
+      '<button type="button" data-ms-consent="denied" style="border:1px solid rgba(255,255,255,.45);background:transparent;color:#fff;border-radius:7px;padding:9px 14px;font-weight:700;cursor:pointer">Reject</button>' +
+      '<button type="button" data-ms-consent="granted" style="border:0;background:#f5c518;color:#0d1b2a;border-radius:7px;padding:9px 14px;font-weight:800;cursor:pointer">Allow</button>' +
+    '</div>';
+  banner.addEventListener('click', function (e) {
+    var btn = e.target && e.target.closest ? e.target.closest('[data-ms-consent]') : null;
+    if (btn) setMicrosoftAdsConsent(btn.getAttribute('data-ms-consent'));
+  });
+  document.body.appendChild(banner);
+}
+
+function initMicrosoftUet() {
+  window.uetq = window.uetq || [];
+  window.uetq.push('consent', 'default', { ad_storage: 'denied' });
+  var storedConsent = getMicrosoftAdsConsent();
+  if (storedConsent === 'granted' || storedConsent === 'denied') {
+    window.uetq.push('consent', 'update', { ad_storage: storedConsent });
+  }
+
+  (function (w, d, t, u, o) {
+    w[u] = w[u] || [];
+    o.ts = (new Date()).getTime();
+    var n = d.createElement(t);
+    n.src = 'https://bat.bing.net/bat.js?ti=' + o.ti + (u !== 'uetq' ? '&q=' + u : '');
+    n.async = 1;
+    n.onload = n.onreadystatechange = function () {
+      var s = this.readyState;
+      if (!s || s === 'loaded' || s === 'complete') {
+        o.q = w[u];
+        w[u] = new UET(o);
+        w[u].push('pageLoad');
+        n.onload = n.onreadystatechange = null;
+      }
+    };
+    var i = d.getElementsByTagName(t)[0];
+    i.parentNode.insertBefore(n, i);
+  })(window, document, 'script', 'uetq', { ti: MICROSOFT_UET_TAG_ID, enableAutoSpaTracking: true });
+
+  if (!storedConsent) {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', showMicrosoftAdsConsent);
+    else showMicrosoftAdsConsent();
+  }
+}
+
+function pushMicrosoftUetEvent(eventName, params) {
+  window.uetq = window.uetq || [];
+  try { window.uetq.push('event', eventName, params || {}); } catch (e) {}
+}
+
+function pushMicrosoftLead(formLocation) {
+  pushMicrosoftUetEvent('lead_submit', {
+    event_category: 'lead',
+    event_label: formLocation,
+    event_value: 1
+  });
+}
+
+initMicrosoftUet();
+
+// Microsoft Advertising requires a clear privacy-policy link on ad landing
+// pages. Add the same link to the existing footer on every page.
+function ensurePrivacyLink() {
+  if (document.querySelector('a[href="/privacy"]')) return;
+  var footer = document.querySelector('.footer-bottom') || document.querySelector('.mini-footer');
+  if (!footer) return;
+  var link = document.createElement('a');
+  link.href = '/privacy';
+  link.textContent = 'Privacy & Cookies';
+  link.style.cssText = 'display:inline-block;margin-left:10px;text-decoration:underline;';
+  footer.appendChild(link);
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ensurePrivacyLink);
+else ensurePrivacyLink();
+
 // Best-effort label for which on-page element a tel: link belongs to,
 // based on existing CSS classes/containers — no markup changes needed.
-function telLinkLocation(a) {
+function contactLinkLocation(a) {
+  if (a.getAttribute && a.getAttribute('data-loc')) return a.getAttribute('data-loc');
   var cls = ' ' + (a.className || '') + ' ';
   if (cls.indexOf(' nav-phone ') !== -1) return 'header_nav';
   if (cls.indexOf(' mobile-call ') !== -1) return 'mobile_nav';
@@ -68,6 +174,8 @@ function telLinkLocation(a) {
   if (cls.indexOf(' slb-call ') !== -1) return 'sticky_bar';
   if (cls.indexOf(' footer-phone-link ') !== -1) return 'footer';
   if (cls.indexOf(' guide-cta ') !== -1) return 'guide_card';
+  if (cls.indexOf(' chat-wa ') !== -1) return 'chat_widget';
+  if (cls.indexOf(' wa-subtle ') !== -1) return 'hero_whatsapp';
   if (a.closest && a.closest('.topbar')) return 'top_bar';
   if (a.closest && a.closest('.emg-strip')) return 'emergency_strip';
   if (a.closest && a.closest('.callback-drawer')) return 'callback_drawer';
@@ -89,10 +197,27 @@ function telLinkLocation(a) {
 document.addEventListener('click', function (e) {
   var a = (e.target && e.target.closest) ? e.target.closest('a[href]') : null;
   if (!a) return;
-  if ((a.getAttribute('href') || '').indexOf('tel:') === 0) {
+  var href = a.getAttribute('href') || '';
+  var linkLocation = contactLinkLocation(a);
+  if (href.indexOf('tel:') === 0) {
     pushDataLayerEvent('phone_click', {
       page_path: window.location.pathname,
-      link_location: telLinkLocation(a)
+      link_location: linkLocation
+    });
+    pushMicrosoftUetEvent('phone_click', {
+      event_category: 'contact',
+      event_label: linkLocation,
+      event_value: 1
+    });
+  } else if (/^https?:\/\/(?:wa\.me|(?:api\.)?whatsapp\.com)\//i.test(href)) {
+    pushDataLayerEvent('whatsapp_click', {
+      page_path: window.location.pathname,
+      link_location: linkLocation
+    });
+    pushMicrosoftUetEvent('whatsapp_click', {
+      event_category: 'contact',
+      event_label: linkLocation,
+      event_value: 1
     });
   }
 }, true);
@@ -152,7 +277,13 @@ async function sendChat() {
   msgs.scrollTop = msgs.scrollHeight;
 
   // Send to lead notification endpoint (server-side formats the Telegram message)
-  sendLead('chat', { message: text, phone });
+  const chatSent = await sendLead('chat', { message: text, phone });
+  if (!chatSent) {
+    showToast("Sorry, that didn't send. Please call 07865 449983 directly.", 'error');
+    return;
+  }
+  pushDataLayerEvent('chat_submit_success', { page_path: window.location.pathname, form_location: 'chat_widget' });
+  pushMicrosoftLead('chat_widget');
 
   setTimeout(() => {
     msgs.innerHTML += `<div class="cmsg bot">${BOT_REPLIES[botIdx % BOT_REPLIES.length]}</div>`;
@@ -291,6 +422,7 @@ async function submitBooking() {
   if (modal) modal.classList.add('open');
 
   pushDataLayerEvent('callback_submit_success', { page_path: window.location.pathname, form_location: 'booking_form' });
+  pushMicrosoftLead('booking_form');
 
   ['bName','bPhone','bEmail','bFrom','bTo','bVehicle','bNotes'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
@@ -330,6 +462,9 @@ async function submitContact() {
 
   const modal = document.getElementById('contactModal');
   if (modal) modal.classList.add('open');
+
+  pushDataLayerEvent('contact_submit_success', { page_path: window.location.pathname, form_location: 'contact_form' });
+  pushMicrosoftLead('contact_form');
 
   ['cName','cPhone','cMsg'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
@@ -453,6 +588,7 @@ async function submitCallback(nameId, phoneId, successId, submitBtnId, jobType) 
     successEl.classList.add('show');
     var formLocation = successId === 'heroSuccess' ? 'hero_widget' : successId === 'drawerSuccess' ? 'callback_drawer' : successId === 'bkSuccess' ? 'booking_callback_box' : 'callback_form';
     pushDataLayerEvent('callback_submit_success', { page_path: window.location.pathname, form_location: formLocation });
+    pushMicrosoftLead(formLocation);
     nameEl.value = '';
     phoneEl.value = '';
   }

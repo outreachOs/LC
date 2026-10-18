@@ -268,19 +268,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <a href="tel:07865449983" class="sb-call" data-loc="sticky_bar">📞 Call Now — 07865 449983</a>
 </div>
 
-<script>
-(function () {
-  window.dataLayer = window.dataLayer || [];
-  document.addEventListener('click', function (e) {
-    var a = (e.target && e.target.closest) ? e.target.closest('a[href^="tel:"]') : null;
-    if (!a) return;
-    window.dataLayer.push({
-      event: 'phone_click',
-      click_location: a.getAttribute('data-loc') || 'content',
-      page_type: 'paid_call_landing'
-    });
-  }, true);
-})();
-</script>
+<script src="main.js"></script>
 </body>
 </html>
